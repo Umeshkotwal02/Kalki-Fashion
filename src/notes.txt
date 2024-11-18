@@ -1,0 +1,435 @@
+# React js Css
+- ## 1. Inline-Css
+- we write css in Reactjs as Javascript Object.
+- Ex: style={{color: "red"}}
+* - Must be Written with camel case syntax:
+- Use backgroundColor instead of background-color:
+- Ex:  <h1 style={{backgroundColor: "lightblue"}}>Hello Style!</h1>
+* - The double curly brackets represent the JavaScript object being created inside of JSX.
+- so we write {{ style= color:"red"}}
+* - we can create object and call it inside the style also that time write css in camel case.
+- in pbject we give como don't use semi column.
+
+const mystyle = {
+      color: "white",
+      backgroundColor: "DodgerBlue",
+      padding: "10px",
+      fontFamily: "Arial"
+}
+Ex.1 - <h1 style={mystyle}>Hello Style!</h1>
+Ex.2 - <h1 style={{color:"red", backgroundColor:"skyblue", padding:"20px", fontFamily:"time new roman"}}>Heading One </h1>
+
+*- Units
+- For most numeric values, you need to specify units as a string (e.g., '16px'). Some properties, like zIndex, can take numeric values directly.
+- we can write z-Index direct
+const style = { padding: '10px', zIndex: 1, };
+* - gap properties
+- gap properties is used for give same gap that all container
+
+- ## External Css
+- To use External we have import css file
+- import "./styles.css";
+
+### background ###
+background-image
+background-color
+background-potio
+
+### Display ###
+1. Inline-Block 
+- give to same Tag or with giving class Name to all that we have stay in Inline-block.
+Example:
+    <div className="button-group">
+      <button className="- .d-inline-block-button">Button 1</button>
+      <button className="- .d-inline-block-button">Button 2</button>
+      <button className="- .d-inline-block-button">Button 3</button>
+    </div>
+  .- .d-inline-block-button {
+      display: - .d-inline-block;
+      padding: 10px 20px;
+      cursor: pointer;
+                       }
+### Position:Sticky ###
+sticky position ek unique position hai jo relative aur fixed ka combination hai. Yeh element scroll hone par relative rehta hai, lekin jab ek specific scroll point par aata hai, toh yeh fixed ho jata hai.
+
+Example: Agar aapke blog page par ek sidebar hai jo scroll hone ke baad ek jagah fix ho jana chahiye, toh position: sticky; top: 0; lagake aap ye effect la sakte hain.
+
+css
+Copy code
+.sidebar {
+  position: sticky;
+  top: 0;
+}
+
+### Flex-Box ###
+
+- display: flex;
+                 Isse container flex container ban jaata hai.
+- flex-direction:: Yeh decide karta hai ki flex items ka arrangement kaise hoga.
+                   row (default): Left to right (horizontally).
+                   column: Top to bottom (vertically).
+                  row-reverse: Right to left.
+                   column-reverse: Bottom to top.
+- justify-content:: Isse hum horizontally items ko align karte hain (main axis pe).
+                   flex-start (default): Items container ke start me align hote hain.
+                   center: Items center me aligned hote hain.
+                   space-between: Items ke beech me equal space hota hai.
+                   space-around: Items ke aas paas equal space hota hai.
+                   space-evenly: Items ke beech aur edges pe equal space hota hai.
+- align-items:: Yeh vertically items ko align karta hai (cross axis pe).
+                flex-start: Items container ke top pe align hote hain.
+                center: Items vertically center me aligned hote hain.
+                flex-end: Items bottom pe align hote hain.
+                stretch (default): Items container ke full height me stretch hote hain.
+                align-self:: Yeh ek specific flex item ko align karta hai cross axis pe, baaki items ke alignment se alag.
+
+2. Flex Item Properties:
+flex-grow:: Yeh decide karta hai ki ek item ko available space me kitna grow karna hai. Default value 0 hoti hai (items grow nahi karte).
+flex-shrink:: Yeh decide karta hai ki ek item ko kitna shrink hona chahiye jab space kam ho. Default value 1 hoti hai.
+flex-basis:: Yeh specify karta hai ki item ki initial size kitni honi chahiye before space distribution.
+flex:: Yeh shorthand hai for flex-grow, flex-shrink, and flex-basis.
+order:: Yeh items ke order ko change karta hai, default value 0 hoti hai.
+
+
+### BootStrap Typography  (Font) ###
+- BootStrap is default font size is 1Rem means 16 px and line-height is is 1.5.
+- for Paragraph <P> tag it take margin Zero from top and 1Rem (16 px) from Bottom.
+- in BootStrap the h1 is class and it has is own property like it's font-family and size.
+- Exam : <h1>h1. Bootstrap heading</h1>
+        <p className="h1">h1. Bootstrap heading</p>
+- # Display headings #
+- it used to increase font size of heading from it actual size.
+- here Size is larger and font-weight is normal.
+- Exam: <p className="display-1">h1. Bootstrap heading</p>
+        <h1 class="display-1">Display 1</h1>
+        <h1 class="display-2">Display 2</h1>
+        <h1 class="display-3">Display 3</h1>
+        <h1 class="display-4">Display 4</h1>
+- <small> : we got fontFamily, fontSize Different. 
+            className=".small"
+- <mark>  : if we use <mark> in BootStrap we got normal light-color of mark.
+            className=".mark"
+- <abbr>  : Abbreviations
+            abbr is used for show any full form or information on mouse hover it show .... below that-  text.
+            it attribute is title:
+            Example:
+            <p><abbr title="attribute">attr</abbr></p>
+            <p><abbr title="HyperText Markup Language" class="initialism">HTML</abbr></p>
+- <blockquote> : is used for any poem, story, give kahavat, muhavra
+                <blockquote class="blockquote">
+                <p class ="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                <p className="blockquote-footer"> Bill Gate </p>
+                </blockquote>
+                - className="blockquote-footer" (show the autor of that)
+- <dl> : definition list  or descriptive list like order-list
+         if we write it in BootStrap it give bold and proper formate
+         Exam:  <dl class="row">
+                  <dt class="col-sm-4">Nested definition list</dt>
+                  <dd class="col-sm-8">Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc.</dd>
+                </dl>
+- <kbd> :
+         give proper formate.
+         Exam : <kbd> ctrl + s </kbd> is for save tag
+
+- Alignment :
+- Font weight and italics :
+fw-bold">Bold text.</p>
+- .fw-bolder
+- .fw-semibold
+- .fw-medium
+- .fw-normal
+- .fw-light
+- .fw-lighter
+- .fst-italic
+- .fst-normal
+- .text-wrap
+- .text-center : class=- "text-center"
+- .text-start
+- .text-end
+- Color:
+- .text-body-secondary
+- .lead : give Different formate to-  text or that div
+          class=- "text-center"
+- .text-break : is used for the-  text no go out-side of container and responsive so the below scroll bar not generate.
+- .text-decoration-none : used-  text <a> tag for used for HyperLink
+- .text-lowercase
+- .text-uppercase
+- .text-capitalize
+- .list-unstyled : used for hide the list symbol(bullet), number of list like
+- .list-- .d-inline : to use this tag apply it on that order list (ol) and also apply on List Tag.
+                 the list is showing vertically using this we can show horizontally used for nav bar creation
+- .lit-- .d-inline-item : 
+                    <Col>
+                    <ol className='list-unstyled list-- .d-inline'>
+                      <li className="list-- .d-inline-item">Home</li>
+                      <li className="list-- .d-inline-item">Product</li>
+                      <li className="list-- .d-inline-item">Navbar</li>
+                      <li className="list-- .d-inline-item">Contact Us</li>
+                    </ol>
+                    </Col>
+### Color: ###
+- .text-primary
+- .text-secondary
+- .text-success
+- .text-danger
+- .text-warning
+- .text-info
+- .text-light
+- .text-dark
+- .text-muted
+- .text-white
+
+### Background Color: ###
+- .bg-primary
+- .bg-secondary
+- .bg-success
+- .bg-danger
+- .bg-warning
+- .bg-info
+- .bg-light
+- .bg-dark
+- .bg-white
+
+## Badge ##
+- is used for show badge at top in like Cart
+
+## Table ##
+- use  <Table striped bordered hover size="sm" variant="dark"> </Table>
+- we can change striped="columns"
+- responsive : Across every breakpoint, use responsive for horizontally scrolling tables. Responsive tables are wrapped automatically in a div
+
+## ProgressBar ##
+
+## Spacing ##
+- margin : top right bottom left
+         :  t    e     b      s
+- Horizontal centering : className="mx-auto"
+- border : className="border border-primary"
+         : className="border border-success p-2 mb-2 border-opacity-75"
+         : className="rounded" (many property see at official)
+- Display: to use display property use .d-displayname
+- .d-none
+- .d-inline
+- .d-inline-block
+- .d-block
+- .d-grid
+- .d-inline-grid
+- .d-table
+- .d-table-cell
+- .d-table-row
+- .d-flex
+- .d-inline-flex
+
+- Display: flex
+- .d-flex
+- flex-row (direction)
+- justify-content-start   X- axix
+- align-item-center       Y- axix
+
+- overflow-1 (<div class="overflow-auto">...</div>)
+- <div class="overflow-x-auto">...</div>
+
+- Position :
+  -         <div class="position-static">...</div>
+            <div class="position-relative">...</div>
+            <div class="position-absolute">...</div>
+            <div class="position-fixed">...</div>
+            <div class="position-sticky">...</div>
+
+- width : w-25 
+- height: h-5
+
+### Navbar ###
+- both are important think pass same id NavbarCollapse to NavbarToggle as aria-controls.
+ <NavbarToggle aria-controls="nav-bar"/>
+ <NavbarCollapse id="my-id"> <NavbarCollapse/>
+- for <Navbar.Dropdown> also provide same id of Navbar (id="my-nav")
+- here using variant we set navbar Navlink color and with bg="dark" we set backgroundColor of navbar
+- : <Navbar variant="light" bg="light" expand="lg">
+- to want Navbar Fix at top Write : fixed="top"
+
+
+### Firebase Database ###
+- go official web site ( https://firebase.google.com ) and go to console in firebase option in firebase website.
+- create new Project.
+- In Side Build options:
+- Authentication : for authenticate user with Google, twitter, facebook etc
+- Firebase Database : Cloud Database, it store data as document.
+- Real-Time Database : 
+                     - we can update it happen in our project real time Database.
+                     - it move data in tree structure.
+- Storage : Store images, videos so we can fetch data
+
+- also we can do here hosting.
+
+Steps : 
+1. Go Project Overview then select for web to connect 
+2. install firebase: npm install firebase
+3.  // Import the functions you need from the SDKs you need
+    import { initializeApp } from "firebase/app";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-fvXSD78V2805UTE_kemN7ra1RtPeSEI",
+      authDomain: "app-9946c.firebaseapp.com",
+      projectId: "app-9946c",
+      storageBucket: "app-9946c.firebasestorage.app",
+      messagingSenderId: "375657658200",
+      appId: "1:375657658200:web:420376f0103fd36d87d72d"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+
+
+Real-Time-Database :
+1. - select location united-state then next select 2.start-in-test option
+2. - There is Two Mode : (select 2.start-in-test option)
+   - 1. Start in locked mode
+    Your data is private by default. Client read/write access will only be granted as specified by your security rules.
+
+   - 2. Start in test mode
+    Your data is open by default to enable quick setup. However, you must update your security rules within 30 days to enable long-term client read/write access.
+3. To check is working or not add DatabaseURL
+  : databaseURL: "https://DATABASE_NAME.firebaseio.com"
+  : copy database url from created real time firebase.
+
+4. In App.js file import
+      database from firebase file : import { getDatabase } from "firebase/database";
+      app from firebase file  : import { app } from "./firebase"; 
+
+5. Make database instance & pass app
+   const db = getDatabase(app)
+   - so it give instance so we can interact with firebase-real time database
+
+6. Read and Write Data
+  : import {ref, set} from "firebase/database";
+
+7. Create Method for put data in our project and set data using set 
+   : this is created for testing to data base connect with project or not.
+   : data is insert and we can add it, update it in see in firebase database.
+
+## Firebase.js
+import { initializeApp } from "firebase/app";
+const firebaseConfig = {
+    apiKey: "AIzaSyA-fvXSD78V2805UTE_kemN7ra1RtPeSEI",
+    authDomain: "app-9946c.firebaseapp.com",
+    projectId: "app-9946c",
+    storageBucket: "app-9946c.firebasestorage.app",
+    messagingSenderId: "375657658200",
+    appId: "1:375657658200:web:420376f0103fd36d87d72d",
+    databaseURL: "https://app-9946c-default-rtdb.firebaseio.com",
+  };
+
+
+  export const app = initializeApp(firebaseConfig);
+
+## App.js
+: import { getDatabase, ref, set } from "firebase/database";
+  import { app } from "./Components/firebase";
+  const db = getDatabase(app)
+  const putData = () => {
+    set(ref(db, "users/umesh"), {  // users/umesh is root
+      id: 1,
+      name: 'Umesh Pralhad Kotwal',
+      age: 21,
+    })
+  }
+
+  function App() {
+    return (
+      <>
+          <button onClick={putData}>Put Data</button>
+        </div>
+      </>
+    )
+  }
+
+  export default App;
+
+
+  ### Authentication Service ###
+ ## 1. Login with Email & Password (Sign-Up)
+ Steps: (work on Login Page import in Login Page)
+    - 1. create auth instance :
+          import { getAuth } from "firebase/auth";
+          const auth = getAuth(app);
+    - 2. create Sign-up user function
+         import function createUserWithEmailAndPassword
+         import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
+// Sign Demo File
+import { app } from "./firebase"
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
+const auth = getAuth(app);
+
+function Demo() {
+
+  const signupUser = ( ) => {
+    createUserWithEmailAndPassword(
+      auth,
+      "umeshkotwal7@gmail.com",
+      'Umesh@123'
+    ).then((value) => console.log(value));
+  }
+  return (
+    <>
+      <h1>Hello I am Demo</h1>
+      <button onClick={signupUser}>Sign-in user</button>
+
+    </>
+  )
+}
+
+export default Demo;
+
+### To Add Google Provider ###
+Step 1:
+- import GoogleAuthProvider and signInWithPopup
+- import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+Step 2:
+- Create signInWithGoogle Function
+- add GoogleAuthProvider as Provider
+: const SignupWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      alert(`Welcome ${user.displayName}`);
+      console.log("User signed in successfully:", user);
+    } catch (error) {
+      alert(error.message);
+      console.error("Error signing in with Google:", error.message);
+    }
+  };
+
+- give button onClick call
+  <Button onClick={SignupWithGoogle} variant="light" className="border border-rounded">
+
+- ### Sign-In User ###
+- import signInWithEmailAndPassword
+- import onAuthStateChanged 
+- make shore this function is in code (const auth = getAuth(app);)
+ 
+
+
+
+
+// drop down code
+ <Dropdown>
+                  <Dropdown.Toggle
+                    as="span"
+                    id="dropdown-profile"
+                    className="text-dark fs-4 mx-2"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <CgProfile />
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu align="end">
+                  <Dropdown.Item onClick={() => setActiveModal('login')}>Login</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
