@@ -1,18 +1,23 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getDatabase } from "firebase/database";
+import { getStorage } from 'firebase/storage';
+
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCaOmWAIZQn5fDaFS8_zeQCaKFUfJUkvIo",
-  authDomain: "newonlineshop-d607a.firebaseapp.com",
-  databaseURL: "https://newonlineshop-d607a-default-rtdb.firebaseio.com",
-  projectId: "newonlineshop-d607a",
-  storageBucket: "newonlineshop-d607a.firebasestorage.app",
-  messagingSenderId: "1092752519930",
-  appId: "1:1092752519930:web:623384e5b5f558bb21cf43",
-  measurementId: "G-LYBX164X3D",
+  apiKey: "AIzaSyAG0Xp54MC2VldtQfHJFRJaFPpjs-xvYek",
+  authDomain: "kalkifashion-476d4.firebaseapp.com",
+  databaseURL: "https://kalkifashion-476d4-default-rtdb.firebaseio.com",
+  projectId: "kalkifashion-476d4",
+  storageBucket: "kalkifashion-476d4.firebasestorage.app",
+  messagingSenderId: "690575161885",
+  appId: "1:690575161885:web:168bfc976ceea8c89fe4f4"
 };
+
 
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const database = getDatabase(app);
+const storage = getStorage(app);

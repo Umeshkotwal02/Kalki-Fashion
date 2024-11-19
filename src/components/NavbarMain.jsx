@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom';
 import { VscAccount } from "react-icons/vsc";
 import { CiLogout } from 'react-icons/ci';
 import { useNavigate } from "react-router-dom";
+import { getDatabase, ref, set } from "firebase/database";  
 
 function NavbarMain() {
 
@@ -27,17 +28,58 @@ function NavbarMain() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setErrorShow] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [mobile, setMobile] = useState("");
 
   const handleClose = () => setActiveModal(null);
+
+  const saveUserDataToDatabase = async (userData) => {
+    const db = getDatabase();
+    const userId = Date.now().toString();
+    const userRef = ref(db, `users/${userId}`);
+    await set(userRef, userData)
+      .then(() => {
+        console.log("User data saved successfully");
+      })
+      .catch((error) => {
+        console.error("Error saving user data: ", error);
+      });
+  };
   // Register with email and passoword
-  const CreateUser = async () => {
+  const CreateUser = async (e) => {
+    e.preventDefault(); // Prevent form submission default behavior
+
+    if (!firstName || !lastName || !email || !mobile || !password) {
+      toast.error("All fields are required!");
+      return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      toast.success("User signed up successfully!");
-      console.log(userCredential.user);
-      setErrorShow("")
+      // Save user data to Firebase Realtime Database
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        mobile,
+        password,
+      };
+      console.log(" Created UserData ::", userCredential)
+      saveUserDataToDatabase(userData);
+
+      toast.success("User details saved successfully!");
+      console.log("User details saved to database");
+
+      // Reset form fields
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setMobile("");
+      setPassword("");
+      handleClose(); // Close the modal
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || "An error occurred while creating the user.");
     }
   };
 
@@ -49,7 +91,7 @@ function NavbarMain() {
       const user = result.user;
       setActiveModal(null);
       toast.success(`Welcome ${user.displayName}`);
-      console.log("User signed in successfully:", user);
+      console.log("User Login with Google Successfully:", user);
     } catch (error) {
       toast.error(error.message);
       console.error("Error signing in with Google:", error.message);
@@ -62,7 +104,7 @@ function NavbarMain() {
     try {
       const loginuser = await signInWithEmailAndPassword(auth, email, password);
       console.log("User Login Data :: ", loginuser);
-      toast.success("User Login SuccessFully")
+      toast.success(`Welcome ${loginuser.user.displayName || loginuser.user.email}`);
       setActiveModal(null)
       setErrorShow("");
     } catch (error) {
@@ -76,6 +118,7 @@ function NavbarMain() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      navigate("/women");
       toast.success("Logged out successfully");
     } catch (error) {
       console.error("Logout error:", error.message);
@@ -83,13 +126,7 @@ function NavbarMain() {
     }
   };
 
-  // const handleAccountDetails =()=>{
-  //   return(
-  //     <>
-  //     navigate("/");
-  //     </>
-  //   )
-  // }
+
   const navigate = useNavigate();
 
   const handleAccountDetails = () => {
@@ -161,6 +198,7 @@ function NavbarMain() {
                 {/* Profile Dropdown */}
                 {user ? (
                   <span>
+
                     <Dropdown>
                       <Dropdown.Toggle
                         as="span"
@@ -170,7 +208,11 @@ function NavbarMain() {
                       >
                         <CgProfile />
                       </Dropdown.Toggle>
+
                       <Dropdown.Menu align="end">
+                        <Dropdown.Item>
+                          <span><span>Welcome! {user.displayName || user.email}</span></span>
+                        </Dropdown.Item>
                         {/* Profie  Account Details */}
                         <Dropdown.Item onClick={handleAccountDetails}>
                           <span className='fs-5 me-2'  >
@@ -220,15 +262,22 @@ function NavbarMain() {
                   filter: "brightness(0.6)",
                 }}
               ></div>
-              <div className="position-relative text-light p-4 d-flex flex-column justify-content-start" style={{ height: "100%" }}>
+              <div
+                className="position-relative text-light p-4 d-flex flex-column justify-content-start"
+                style={{ height: "100%" }}
+              >
                 <h2 className="fw-bold">Join the Online Shop Circle!</h2>
                 <p className="mt-3">Exclusive benefits include:</p>
                 <ul className="list-unstyled">
-                  <li>Get 15% off on your first order | <strong>Use code: INDIA15</strong></li>
+                  <li>
+                    Get 15% off on your first order | <strong>Use code: INDIA15</strong>
+                  </li>
                   <li>Early access to collections</li>
                   <li>Exclusive offers and discounts</li>
                 </ul>
-                <p className="mt-3">Join Now! <small className="text-muted">T &amp; C Apply</small></p>
+                <p className="mt-3">
+                  Join Now! <small className="text-muted">T &amp; C Apply</small>
+                </p>
               </div>
             </div>
           </Col>
@@ -237,7 +286,16 @@ function NavbarMain() {
             <button type="button" className="btn-close align-self-end" aria-label="Close" onClick={handleClose}></button>
 
             <h5 className="mb-4 text-center">Login</h5>
-            <Form>
+            <Form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!email || !password) {
+                  alert("Please fill in all fields.");
+                } else {
+                  LoginUser();
+                }
+              }}
+            >
               <Form.Group controlId="formEmail" className="mb-3">
                 <Form.Control
                   type="email"
@@ -248,7 +306,7 @@ function NavbarMain() {
                   required
                 />
               </Form.Group>
-              <Form.Group className="mb-3">
+              <Form.Group controlId="formPassword" className="mb-3">
                 <Form.Control
                   type="password"
                   placeholder="Password"
@@ -258,32 +316,39 @@ function NavbarMain() {
                 />
               </Form.Group>
 
-              <Button variant="warning" className="w-100" onClick={LoginUser}>
+              <Button variant="warning" className="w-100" type="submit">
                 Login
               </Button>
             </Form>
             <hr />
-            <div className="d-flex justify-content-center">
-              Forgot Password ?
-            </div>
+            <div className="d-flex justify-content-center">Forgot Password?</div>
             &nbsp;
 
             <div className="d-flex justify-content-center">
-              <Button variant="light"
+              <Button
+                variant="light"
                 className="border-none"
                 style={{ all: "unset", cursor: "pointer" }}
-                onClick={SignupWithGoogle} >
+                onClick={SignupWithGoogle}
+              >
                 <FcGoogle className="fs-3 me-1" style={{ cursor: "pointer" }} />
                 Login with Google
               </Button>
             </div>
             <hr />
             <div className="d-flex justify-content-center">
-              Don't have an account ? <button onClick={() => setActiveModal('signup')} className="btn btn-link p-0 text-decoration-none ms-2" >Sign Up</button>
+              Don't have an account?{" "}
+              <button
+                onClick={() => setActiveModal("signup")}
+                className="btn btn-link p-0 text-decoration-none ms-2"
+              >
+                Sign Up
+              </button>
             </div>
           </Col>
         </Row>
       </Modal>
+
 
       {/* Sign-Up Registration Modal */}
 
@@ -295,21 +360,25 @@ function NavbarMain() {
                 <div
                   className="position-absolute top-0 start-0 w-100 h-100"
                   style={{
-                    backgroundImage: "url('assests/images/loginmodal.jpg",
+                    backgroundImage: "url('assets/images/loginmodal.jpg')",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     filter: "brightness(0.6)",
                   }}
                 ></div>
-                <div className="position-relative text-light p-4 d-flex flex-column justify-content-start" style={{ height: "100%" }}>
+                <div
+                  className="position-relative text-light p-4 d-flex flex-column justify-content-start"
+                  style={{ height: "100%" }}
+                >
                   <h2 className="fw-bold">Register & Be A Part Of The KALKI Circle!</h2>
                   <p className="mt-3">Enjoy exclusive benefits like: </p>
                   <ul className="list-unstyled">
-
                     <li>- Exclusive early collection showcase</li>
                     <li>- Access amazing offers, discounts and more</li>
                   </ul>
-                  <p className="mt-3">Join Now! <small className="text-muted">T &amp; C Apply</small></p>
+                  <p className="mt-3">
+                    Join Now! <small className="text-muted">T &amp; C Apply</small>
+                  </p>
                 </div>
               </div>
             </Col>
@@ -317,18 +386,25 @@ function NavbarMain() {
             <Col md={6} className="d-flex flex-column justify-content-center p-4">
               <button type="button" className="btn-close align-self-end" aria-label="Close" onClick={handleClose}></button>
               <h5 className="mb-4 text-center">Sign Up</h5>
-              <Form>
-
+              <Form onSubmit={CreateUser}>
                 <Form.Group controlId="formFirstName" className="mb-3">
                   <Form.Control
                     type="text"
                     placeholder="Enter First Name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    onFocus={() => console.log("First Name focused")}
+                    required
                   />
                 </Form.Group>
                 <Form.Group controlId="formLastName" className="mb-3">
                   <Form.Control
                     type="text"
                     placeholder="Enter Last Name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    onFocus={() => console.log("Last Name focused")}
+                    required
                   />
                 </Form.Group>
                 <Form.Group controlId="formEmail" className="mb-3">
@@ -337,13 +413,17 @@ function NavbarMain() {
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => console.log("Email field focused")}
+                    required
                   />
-
                 </Form.Group>
                 <Form.Group controlId="formMobile" className="mb-3">
                   <Form.Control
                     type="text"
                     placeholder="Enter Mobile Number"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    required
                   />
                 </Form.Group>
                 <Form.Group controlId="formPassword" className="mb-3">
@@ -352,32 +432,36 @@ function NavbarMain() {
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    required
                   />
-                  <Form.Control.Feedback type="invalid">  </Form.Control.Feedback>
                 </Form.Group>
-                <Button onClick={CreateUser} variant="warning" className="w-100 mb-3">
+                <Button type="submit" variant="warning" className="w-100 mb-3">
                   Sign Up
                 </Button>
-                <hr />
-                <div className="d-flex justify-content-center">
-                  <Button
-                    variant="light"
-                    style={{ all: "unset", cursor: "pointer" }}
-                    onClick={SignupWithGoogle}>
-                    &nbsp;
-                    <FcGoogle className="fs-3 me-1" />
-                    Sign with Google
-                  </Button>
-                </div>
               </Form>
               <hr />
+              <div className="d-flex justify-content-center">
+                <Button
+                  variant="light"
+                  style={{ all: "unset", cursor: "pointer" }}
+                  onClick={SignupWithGoogle}
+                >
+                  <FcGoogle className="fs-3 me-1" />
+                  Sign with Google
+                </Button>
+              </div>
+              <hr />
               <div className="text-center">
-                Already Have an account? <span onClick={() => setActiveModal('login')} className="btn btn-link text-decoration-none">Login</span>
+                Already Have an account?{" "}
+                <span onClick={() => setActiveModal("login")} className="btn btn-link text-decoration-none">
+                  Login
+                </span>
               </div>
             </Col>
           </Row>
         </Modal.Body>
       </Modal>
+
     </>
   );
 }

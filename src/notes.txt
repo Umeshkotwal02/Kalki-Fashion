@@ -433,3 +433,5 @@ Step 2:
                   <Dropdown.Item onClick={() => setActiveModal('login')}>Login</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
+
+i want to set Userfetch Data will show as in card as i give formate and i can edit that data in right side given form we are fetching data from firebase realtime api and edit it in form

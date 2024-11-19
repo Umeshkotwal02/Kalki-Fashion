@@ -1,241 +1,445 @@
-import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
-// import { IoDiamondOutline, FiAtSign } from "../utils/Icons";
-import { FiAtSign } from "react-icons/fi";
-import { IoDiamondOutline } from "react-icons/io5";
-import { PiStarFourFill } from "react-icons/pi";
-import { FiEyeOff } from "react-icons/fi";
-import { FiEye } from "react-icons/fi";
-import "../styles/Login.css";
-import { useNavigate } from "react-router-dom";
-import { resetError, resetSuccess } from "../redux/slices/authSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../redux/Thunk/authTunk";
+import React, { useState, useEffect } from "react";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import Row from "react-bootstrap/Row";
+import Table from "react-bootstrap/Table";
+import { Container } from "react-bootstrap";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import {
+    CitySelect,
+    CountrySelect,
+    StateSelect,
+} from "react-country-state-city";
+import "react-country-state-city/dist/react-country-state-city.css";
+import { getDatabase, ref, set, get, remove } from "firebase/database";
+import { initializeApp } from "firebase/app";
+import { getStorage } from 'firebase/storage';
 
-const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
-  const [touched, setTouched] = useState({ email: false, password: false });
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const { user, isLoading, error, success } = useSelector(
-    (state) => state.auth
-  );
-
-  useEffect(() => {
-    return () => {
-      // Perform any necessary cleanup here
-      dispatch(resetError());
-      dispatch(resetSuccess());
-    };
-  }, [dispatch]);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-  const handleBlur = (e) => {
-    const { name } = e.target;
-    setTouched((prevTouched) => ({
-      ...prevTouched,
-      [name]: true,
-    }));
-   
-  };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    dispatch(resetError());
-    console.log(formData);
-
-    try {
-      await dispatch(loginUser(formData)).unwrap();
-      dispatch(resetSuccess());
-      setTimeout(() => navigate("/category"), 1000);
-    } catch (errorno) {
-      console.log("error in login component::", error);
-    }
-  };
-
-  return (
-    <Container fluid className="d-grid align-items-center">
-      <Row className="min-vh-100">
-        <Col xs={12} md={6} className="p-0 d-grid">
-          <div
-            className="p-4 p-md-5 align-content-between align-content-md-end d-grid"
-            style={{ minHeight: "300px" }}
-          >
-            <div className="guy-using-phone"></div>
-            <div className="guy-bg-color"></div>
-            <div className="d-flex justify-content-center align-items-center d-md-none">
-              <a href="/signin" className="p-1 anchor-div-1">
-                <img
-                  src="/asset/images/printfuseFullLogo.png"
-                  alt="printfuse-full-logo"
-                  style={{
-                    height: "100%",
-                    width: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-              </a>
-            </div>
-            <h5 className="m-0  font-decoration-signin">
-              “Design and sell 200+ print on demand products hasslefree. Benefit
-              from the most competitive prices and maximize your profits.”
-            </h5>
-          </div>
-        </Col>
-        <Col xs={12} md={6} className="p-0 d-grid">
-          <div
-            className=" d-grid px-3 px-lg-5 py-5 position-relative"
-            style={{ backgroundColor: "#f5eee9" }}
-          >
-            <div className="d-none d-md-flex align-items-center justify-content-center position-absolute start-50 logo-div">
-              <a href="/signin" className="p-1 anchor-div">
-                <img
-                  src="/asset/images/printfuseFullLogo.png"
-                  alt="printfuse-full-logo"
-                  style={{
-                    height: "100%",
-                    width: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-              </a>
-            </div>
-            <Container className="d-grid gap-4 px-xl-5 position-relative left-side-holder">
-              <div className="d-none d-md-block icon-in-sign">
-                <FiAtSign className="first" />
-                <PiStarFourFill className="second" />
-                <IoDiamondOutline className="third" />
-                <PiStarFourFill className="fourth" />
-              </div>
-
-              <div className="d-grid px-md-5">
-                <Form onSubmit={handleSubmit}>
-                  <h1 className=" fw-bolder m-0 text-center my-2">
-                    Hello Again !
-                  </h1>
-                  <Row className="g-2">
-                    <Col xs={12} className="px-1 d-grid align-content-start">
-                      <Form.Group className="mb-3" controlId="formEmail">
-                        <Form.Label className="mb-0">
-                          Email
-                          <span style={{ color: "red" }}>*</span>
-                        </Form.Label>
-                        <Form.Control
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          placeholder="Your Email"
-                          required
-                          className="py-2"
-                          onBlur={handleBlur}
-                          style={{
-                            borderColor:
-                              touched.email && !formData.email ? "red" : "",
-                          }}
-                        />
-                        {(error?.email ||
-                          (touched.email && !formData.email)) && (
-                          <div
-                            style={{
-                              color: "red",
-                              fontSize: "15px",
-                              fontWeight: "normal",
-                            }}
-                          >
-                            {error?.email ? error.email : "*Email is required"}
-                          </div>
-                        )}
-                      </Form.Group>
-                    </Col>
-                    <Col xs={12} className="px-1 d-grid align-content-start">
-                      <Form.Group className="mb-3" controlId="formPassword">
-                        <Form.Label className="mb-0">
-                          Password<span style={{ color: "red" }}>*</span>
-                        </Form.Label>
-                        <div className="position-relative">
-                          <Form.Control
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Password"
-                            className="py-2"
-                            required
-                            onBlur={handleBlur}
-                            style={{
-                              borderColor:
-                                touched.password && !formData.password
-                                  ? "red"
-                                  : "",
-                            }}
-                          />
-                          <span
-                            onClick={togglePasswordVisibility}
-                            style={{
-                              cursor: "pointer",
-                              position: "absolute",
-                              right: "10px",
-                              top: "50%",
-                              transform: "translateY(-50%)",
-                            }}
-                          >
-                            {!showPassword ? <FiEyeOff /> : <FiEye />}
-                          </span>
-                        </div>
-                        {(error?.password ||
-                          (touched.password && !formData.password)) && (
-                          <div
-                            style={{
-                              color: "red",
-                              fontSize: "15px",
-                              fontWeight: "normal",
-                            }}
-                          >
-                            {error?.password
-                              ? error.password
-                              : "*Password is required"}
-                          </div>
-                        )}
-                      </Form.Group>
-                    </Col>
-                    <Col lg={12} md={12} className="mt-3">
-                      <div className="text-start d-flex submit-button">
-                        <Button type="submit" className=" button w-100">
-                          Log In
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
-                  <div className="d-grid gap-3 pt-sm-3 pt-4">
-                    <span className=" text-center" style={{ fontSize: "16px" }}>
-                      Have no account yet?
-                      <a
-                        className="text-decoration-none "
-                        style={{ fontWeight: "600", color: "#12715b" }}
-                        href="/signup"
-                      >
-                        Signup
-                      </a>
-                    </span>
-                  </div>
-                </Form>
-              </div>
-            </Container>
-          </div>
-        </Col>
-      </Row>
-    </Container>
-  );
+// Firebase configuration (replace with your Firebase config)
+const firebaseConfig = {
+    apiKey: "AIzaSyBweSo_uyBSX_1RNMHFdrUZNaYzWcIuppg",
+    authDomain: "reactotp-5a042.firebaseapp.com",
+    databaseURL: "https://reactotp-5a042-default-rtdb.firebaseio.com",
+    projectId: "reactotp-5a042",
+    storageBucket: "reactotp-5a042.firebasestorage.app",
+    messagingSenderId: "303973562168",
+    appId: "1:303973562168:web:7069c804268ad8c6e973cd",
+    measurementId: "G-8SM4ZTPMKH"
 };
 
-export default Login;
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const storage = getStorage(app);
+
+function AccountDetails() {
+    const [region, setRegion] = useState("");
+    const [countryId, setCountryId] = useState(0);
+    const [stateId, setStateId] = useState(0);
+    const [accountFormData, setAccountFormData] = useState({
+        firstname: "",
+        lastname: "",
+        email: "",
+        mobile: "",
+        gender: "",
+        age: 18,
+        interests: [],
+        dob: "",
+        country: "",
+        state: "",
+        city: "",
+        profileImage: null,
+    });
+    const [users, setUsers] = useState([]);
+    const [editId, setEditId] = useState(null);
+
+    // Fetch all users
+    const fetchData = async () => {
+        try {
+            const snapshot = await get(ref(database, "users"));
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const formattedData = Object.entries(data).map(([id, value]) => ({
+                    id,
+                    ...value,
+                }));
+                setUsers(formattedData);
+            } else {
+                setUsers([]);
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    // Handle form changes
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setAccountFormData({ ...accountFormData, [name]: value });
+    };
+
+
+    const handlePhoneChange = (value) => {
+        setAccountFormData({ ...accountFormData, mobile: value });
+    };
+
+    const handleCountryChange = (selectedCountry) => {
+        if (selectedCountry) {
+            setCountryId(selectedCountry.id);
+            setAccountFormData({ ...accountFormData, country: selectedCountry.name });
+        }
+    };
+
+    const handleStateChange = (selectedState) => {
+        if (selectedState) {
+            setStateId(selectedState.id);
+            setAccountFormData({ ...accountFormData, state: selectedState.name });
+        }
+    };
+
+    const handleCityChange = (selectedCity) => {
+        if (selectedCity) {
+            setAccountFormData({ ...accountFormData, city: selectedCity.name });
+        }
+    };
+
+    const handleInterestChange = (e) => {
+        const { name, checked } = e.target;
+        setAccountFormData((prevState) => {
+            const updatedInterests = checked
+                ? [...prevState.interests, name]
+                : prevState.interests.filter((interest) => interest !== name);
+            return { ...prevState, interests: updatedInterests };
+        });
+    };
+
+    // Submit data (add or update)
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const userId = editId || Date.now().toString();
+            await set(ref(database, `users/${userId}`), accountFormData);
+            alert(editId ? "Data updated successfully!" : "Data saved successfully!");
+            setEditId(null); // Reset edit mode
+            setAccountFormData({
+                firstname: "",
+                lastname: "",
+                email: "",
+                mobile: "",
+                gender: "",
+                dob: "",
+                age: 18,
+                interests: [],
+                country: "",
+                state: "",
+                city: "",
+                profileImage: "",
+            });
+            fetchData();
+        } catch (error) {
+            console.error("Error saving data:", error);
+        }
+    };
+
+    // Edit a user
+    const handleEdit = (user) => {
+        setEditId(user.id);
+        setAccountFormData(user);
+    };
+
+    // Delete a user
+    const handleDelete = async (id) => {
+        try {
+            await remove(ref(database, `users/${id}`));
+            alert("Data deleted successfully!");
+            fetchData();
+        } catch (error) {
+            console.error("Error deleting data:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    return (
+        <Container>
+            <Row>
+                <Form noValidate onSubmit={handleSubmit}>
+                    <Row>
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>Profile Image URL</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="profileImage"
+                                value={accountFormData.profileImage}
+                                onChange={handleChange}
+                                placeholder="Enter image URL"
+                            />
+                        </Form.Group>
+                    </Row>
+                    <Row className="mb-3">
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>First name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="firstname"
+                                value={accountFormData.firstname}
+                                onChange={handleChange}
+                                required
+                            />
+                        </Form.Group>
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>Last name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="lastname"
+                                value={accountFormData.lastname}
+                                onChange={handleChange}
+                            />
+                        </Form.Group>
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>Gender</Form.Label>
+                            <Form.Check
+                                label="Male"
+                                name="gender"
+                                type="radio"
+                                value="Male"
+                                checked={accountFormData.gender === "Male"}
+                                onChange={handleChange}
+                            />
+                            <Form.Check
+                                label="Female"
+                                name="gender"
+                                type="radio"
+                                value="Female"
+                                checked={accountFormData.gender === "Female"}
+                                onChange={handleChange}
+                            />
+                        </Form.Group>
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>Date of Birth</Form.Label>
+                            <Form.Control
+                                type="date"
+                                name="dob"
+                                value={accountFormData.dob}
+                                onChange={handleChange}
+                            />
+                        </Form.Group>
+                    </Row>
+                    <Row>
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>Country</Form.Label>
+                            <CountrySelect onChange={handleCountryChange} placeHolder="Select Country" />
+                        </Form.Group>
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>State</Form.Label>
+                            <StateSelect countryid={countryId} onChange={handleStateChange} placeHolder="Select State" />
+                        </Form.Group>
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>City</Form.Label>
+                            <CitySelect countryid={countryId} stateid={stateId} onChange={handleCityChange} placeHolder="Select City" />
+                        </Form.Group>
+                    </Row>
+                    <Row>
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>Age</Form.Label>
+                            <Form.Control
+                                type="range"
+                                min="1"
+                                max="100"
+                                name="age"
+                                value={accountFormData.age}
+                                onChange={handleChange}
+                                step="1"
+                                className="range-slider"
+                            />
+                            <Form.Text className="fw-bold">{accountFormData.age} years old</Form.Text>
+                        </Form.Group>
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>Interests</Form.Label>
+                            <Form.Check
+                                inline
+                                label="Cricket"
+                                name="Cricket"
+                                checked={accountFormData.interests.includes("Cricket")}
+                                onChange={handleInterestChange}
+                            />
+                            <Form.Check
+                                inline
+                                label="Singing"
+                                name="Singing"
+                                checked={accountFormData.interests.includes("Singing")}
+                                onChange={handleInterestChange}
+                            />
+                            <Form.Check
+                                inline
+                                label="Drawing"
+                                name="Drawing"
+                                checked={accountFormData.interests.includes("Drawing")}
+                                onChange={handleInterestChange}
+                            />
+                            <Form.Check
+                                inline
+                                label="Traveling"
+                                name="Traveling"
+                                checked={accountFormData.interests.includes("Traveling")}
+                                onChange={handleInterestChange}
+                            />
+                        </Form.Group>
+                    </Row>
+                    <Row>
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>Email</Form.Label>
+                            <InputGroup>
+                                <InputGroup.Text>@</InputGroup.Text>
+                                <Form.Control
+                                    type="email"
+                                    name="email"
+                                    value={accountFormData.email}
+                                    onChange={handleChange}
+                                />
+                            </InputGroup>
+                        </Form.Group>
+                        <Form.Group as={Col} md="3">
+                            <Form.Label>Mobile No.</Form.Label>
+                            <PhoneInput
+                                international
+                                defaultCountry="IN"
+                                placeholder="Enter Mobile Number"
+                                value={accountFormData.mobile}
+                                onChange={handlePhoneChange}
+                            />
+                        </Form.Group>
+                    </Row>
+                    <Button type="submit" className="mt-4">
+                        {editId ? "Update Data" : "Submit Data"}
+                    </Button>
+                </Form>
+            </Row>
+            <Row className="mt-5">
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                            <th>Profile Image</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Gender</th>
+                            <th>Date of Birth</th>
+                            <th>Country</th>
+                            <th>State</th>
+                            <th>City</th>
+                            <th>Age</th>
+                            <th>Interests</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map((user) => (
+                            <tr key={user.id}>
+                                <td>
+                                    {user.profileImage ? (
+                                        <img
+                                            src={user.profileImage}
+                                            alt="Profile"
+                                            style={{ width: 100, height: 100, borderRadius: "50%" }}
+                                        />
+                                    ) : (
+                                        <span>No Image</span>
+                                    )}
+                                </td>
+                                <td>{user.firstname}</td>
+                                <td>{user.lastname}</td>
+                                <td>{user.email}</td>
+                                <td>{user.mobile}</td>
+                                <td>{user.gender}</td>
+                                <td>{user.dob}</td>
+                                <td>{user.country}</td>
+                                <td>{user.state}</td>
+                                <td>{user.city}</td>
+                                <td>{user.age}</td>
+                                <td>{user.interests.join(", ")}</td>
+                                <td>
+                                    <Button
+                                        variant="warning"
+                                        onClick={() => handleEdit(user)}
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Button
+                                        variant="danger"
+                                        onClick={() => handleDelete(user.id)}
+                                    >
+                                        Delete
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </Row>
+        </Container>
+    );
+}
+
+export default AccountDetails;
+
+
+<Card 
+  key={user.id} 
+  className="mb-3 shadow rounded-lg border-0" 
+  style={{ width: '20rem', overflow: 'hidden', backgroundColor: '#f9f9f9' }}
+>
+  <Card.Body>
+    <div className="d-flex align-items-center mb-3">
+      <Card.Img 
+        variant="top"
+        src={user.profileImage || "https://via.placeholder.com/100"}
+        alt="Profile"
+        style={{
+          width: "80px",
+          height: "80px",
+          objectFit: "cover",
+          borderRadius: "50%",
+          marginRight: "15px",
+          border: "2px solid #007bff"
+        }}
+      />
+      <div>
+        <Card.Title className="text-primary mb-1">
+          {user.firstname} {user.lastname}
+        </Card.Title>
+        <Card.Text className="text-muted small mb-0">
+          <strong>Email:</strong> {user.email}
+        </Card.Text>
+        <Card.Text className="text-muted small mb-0">
+          <strong>Mobile:</strong> {user.mobile}
+        </Card.Text>
+        <Card.Text className="text-muted small">
+          <strong>Gender:</strong> {user.gender}
+        </Card.Text>
+      </div>
+    </div>
+    <div className="d-flex justify-content-between">
+      <Button
+        variant="primary"
+        onClick={() => handleEdit(user)}
+        className="px-4"
+      >
+        Edit
+      </Button>
+      <Button 
+        variant="outline-danger" 
+        onClick={() => handleDelete(user.id)} 
+        className="px-4"
+      >
+        Delete
+      </Button>
+    </div>
+  </Card.Body>
+</Card>

@@ -8,6 +8,7 @@ import Men from './pages/Men';
 import Bridal from './pages/Bridal';
 import Luxe from './pages/Luxe';
 import AccountDetails from './pages/AccountDetails';
+import ProtectedRoute from './components/ProtectedRoute';
 
 
 
@@ -16,29 +17,59 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <><NavbarMain /><Women /></>
+      element: (
+        <>
+          <NavbarMain />
+          <Women />
+        </>
+      ),
     },
     {
       path: "/women",
-      element: <><NavbarMain /><Women /></>
+      element: (
+        <>
+          <NavbarMain />
+          <Women />
+        </>
+      ),
     },
     {
       path: "/men",
-      element: <><NavbarMain /><Men /></>
+      element: (
+        <>
+          <NavbarMain />
+          <Men />
+        </>
+      ),
     },
     {
       path: "/bridal",
-      element: <><NavbarMain /><Bridal /></>
+      element: (
+        <>
+          <NavbarMain />
+          <Bridal />
+        </>
+      ),
     },
     {
       path: "/luxe",
-      element: <><NavbarMain /><Luxe /></>
+      element: (
+        <>
+          <NavbarMain />
+          <Luxe />
+        </>
+      ),
     },
     {
       path: "/accountdetails",
-      element: <><NavbarMain /><AccountDetails /></>
-    }
-  ])
+      element: (
+        <ProtectedRoute>
+          <NavbarMain />
+          <AccountDetails />
+        </ProtectedRoute>
+      ),
+    },
+  ]);
   return (
     <>
       <Toaster />
